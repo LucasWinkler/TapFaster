@@ -4,12 +4,13 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import android.content.Context;
 import android.util.Patterns;
 
+import io.github.lucaswinkler.tapfaster.R;
 import io.github.lucaswinkler.tapfaster.data.LoginRepository;
 import io.github.lucaswinkler.tapfaster.data.Result;
 import io.github.lucaswinkler.tapfaster.data.model.User;
-import io.github.lucaswinkler.tapfaster.ui.account.R;
 
 public class LoginViewModel extends ViewModel {
 
@@ -29,9 +30,9 @@ public class LoginViewModel extends ViewModel {
         return loginResult;
     }
 
-    public void login(String username, String password) {
+    public void login(Context context, String username, String password) {
         // can be launched in a separate asynchronous job
-        Result<User> result = loginRepository.login(username, password);
+        Result<User> result = loginRepository.login(context, username, password);
 
         if (result instanceof Result.Success) {
             User data = ((Result.Success<User>) result).getData();

@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,7 +30,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE " + TABLE_USER + "("
                 + COLUMN_USER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + COLUMN_USER_NAME + " TEXT UNIQUE,"
-                + COLUMN_USER_BEST_TIME + " INTEGER," + COLUMN_USER_PASSWORD + " TEXT" + ")");
+                + COLUMN_USER_BEST_TIME + " TEXT," + COLUMN_USER_PASSWORD + " TEXT" + ")");
     }
 
     @Override
@@ -40,6 +41,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public void addUser(String username, String password) {
         SQLiteDatabase db = this.getWritableDatabase();
+
+        if (checkUserExists(username)) {
+            db.close();
+            return;
+        }
 
         ContentValues values = new ContentValues();
         values.put(COLUMN_USER_NAME, username);
@@ -64,8 +70,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         User user = null;
 
-        if (cursorCount > 0) {
-            user = new User(cursor.getString(cursor.getColumnIndex(COLUMN_USER_ID)), username, Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_USER_BEST_TIME))));
+        if (cursor.moveToFirst()) {
+            user = new User(
+                    cursor.getString(cursor.getColumnIndex(COLUMN_USER_ID)),
+                    username,
+                    cursor.getString(cursor.getColumnIndex(COLUMN_USER_BEST_TIME)));
         }
 
         cursor.close();
@@ -92,7 +101,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 userList.add(new User(
                         cursor.getString(cursor.getColumnIndex(COLUMN_USER_ID)),
                         cursor.getString(cursor.getColumnIndex(COLUMN_USER_NAME)),
-                        Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_USER_BEST_TIME)))));
+                        cursor.getString(cursor.getColumnIndex(COLUMN_USER_BEST_TIME))));
             } while (cursor.moveToNext());
         }
         cursor.close();
@@ -134,7 +143,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         db.close();
 
-        return cursorCount > 0 ;
+        return cursorCount > 0;
     }
 
     public boolean isValidLogin(String username, String password) {

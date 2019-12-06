@@ -16,8 +16,9 @@ public class LoginDataSource {
         DatabaseHelper db = new DatabaseHelper(context);
 
         try {
+            // If no user then register a new one
             if (!db.isValidLogin(username, password)) {
-                throw new IOException("Invalid login information.");
+                db.addUser(username, password);
             }
 
             return new Result.Success<>(db.getUser(username, password));
