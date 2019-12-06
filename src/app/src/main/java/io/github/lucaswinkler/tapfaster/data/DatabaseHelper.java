@@ -23,17 +23,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_USER_PASSWORD = "password";
 
     private SQLiteDatabase db;
+
     private void openReadableDb() {
         db = this.getReadableDatabase();
     }
+
     private void openWriteableDb() {
         db = this.getWritableDatabase();
     }
+
     private void closeDb() {
         if (db != null) {
             db.close();
         }
     }
+
     private void closeCursor(Cursor cursor) {
         if (cursor != null) {
             cursor.close();
@@ -48,7 +52,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE " + TABLE_USER + "("
                 + COLUMN_USER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + COLUMN_USER_NAME + " TEXT UNIQUE,"
-                + COLUMN_USER_BEST_TIME + " TEXT DEFAULT '-1'," + COLUMN_USER_PASSWORD + " TEXT" + ")");
+                + COLUMN_USER_BEST_TIME + " INTEGER DEFAULT -1," + COLUMN_USER_PASSWORD + " TEXT" + ")");
     }
 
     @Override
@@ -78,7 +82,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             user = new User(
                     Long.toString(cursor.getLong(cursor.getColumnIndex(COLUMN_USER_ID))),
                     cursor.getString(cursor.getColumnIndex(COLUMN_USER_NAME)),
-                    cursor.getString(cursor.getColumnIndex(COLUMN_USER_BEST_TIME)));
+                    cursor.getInt(cursor.getColumnIndex(COLUMN_USER_BEST_TIME)));
         }
 
         closeCursor(cursor);
@@ -105,7 +109,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 userList.add(new User(
                         cursor.getString(cursor.getColumnIndex(COLUMN_USER_ID)),
                         cursor.getString(cursor.getColumnIndex(COLUMN_USER_NAME)),
-                        cursor.getString(cursor.getColumnIndex(COLUMN_USER_BEST_TIME))));
+                        cursor.getInt(cursor.getColumnIndex(COLUMN_USER_BEST_TIME))));
             } while (cursor.moveToNext());
         }
         cursor.close();
@@ -118,7 +122,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         openWriteableDb();
 
         ContentValues values = new ContentValues();
-        values.put(COLUMN_USER_NAME, user.getUsername());
         values.put(COLUMN_USER_BEST_TIME, user.getBestTime());
 
         db.update(TABLE_USER, values, COLUMN_USER_ID + " = ?", new String[]{String.valueOf(user.getId())});

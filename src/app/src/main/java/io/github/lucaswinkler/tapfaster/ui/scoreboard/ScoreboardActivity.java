@@ -9,12 +9,14 @@ import android.widget.SimpleAdapter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import io.github.lucaswinkler.tapfaster.R;
 import io.github.lucaswinkler.tapfaster.data.DatabaseHelper;
 import io.github.lucaswinkler.tapfaster.data.UserManager;
+import io.github.lucaswinkler.tapfaster.data.models.User;
 import io.github.lucaswinkler.tapfaster.ui.home.HomeActivity;
 import io.github.lucaswinkler.tapfaster.ui.user.LoginActivity;
 
@@ -27,14 +29,44 @@ public class ScoreboardActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scoreboard);
 
-        //itemsListView = findViewById(R.id.itemsListView);
-        //db = new DatabaseHelper(this);
-        //updateDisplay();
+        itemsListView = findViewById(R.id.itemsListView);
+        db = new DatabaseHelper(this);
+        updateDisplay("");
     }
 
-    private void updateDisplay(){
-        // Update the scoreboard by getting all players and putting their data into a list view
-        // Filter by the text in the search bar and order by the time
+    private void updateDisplay(String searchUsername) {
+        // TODO: Filter by the text in the search bar and order by the time
+        ArrayList<HashMap<String, String>> data = new ArrayList<>();
+        List<User> allUsers = db.getUsers();
+        List<User> users = new ArrayList<User>();
+
+        for (User user : users) {
+            HashMap<String, String> map = new HashMap<String, String>();
+
+            // If no best time then don't display on scoreboard
+            if (user.getBestTime() <= 0) {
+                continue;
+            }
+
+            if (!searchUsername.isEmpty()){
+                if (user.getUsername().contains(searchUsername)) {
+                    map.put("name", user.getUsername());
+                    map.put("best_time", user.getBestTimeToString());
+                }
+            } else {
+                map.put("name", user.getUsername());
+                map.put("best_time", user.getBestTimeToString());
+            }
+
+            data.add(map);
+        }
+
+        int resource = R.layout.listview_item;
+        String[] from = {"name", "best_time"};
+        int[] to = {R.id.nameTextView, R.id.timeTextView};
+
+        SimpleAdapter adapter = new SimpleAdapter(this, data, resource, from, to);
+        itemsListView.setAdapter(adapter);
     }
 
     @Override

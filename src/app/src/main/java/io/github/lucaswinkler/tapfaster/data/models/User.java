@@ -9,9 +9,9 @@ public class User {
     private String username;
 
     // The users best time which is their lowest average in milliseconds
-    private String bestTime;
+    private int bestTime;
 
-    public User(String id, String username, String bestTime) {
+    public User(String id, String username, int bestTime) {
         this.id = id;
         this.username = username;
         this.bestTime = bestTime;
@@ -25,9 +25,9 @@ public class User {
         return username;
     }
 
-    public String getBestTime() { return bestTime; }
+    public int getBestTime() { return bestTime; }
 
-    public String getBestTimeFormatted() { return bestTime + "ms"; }
+    public String getBestTimeToString() { return bestTime + "ms"; }
 
-    public void setBestTime(String bestTime) { this.bestTime = bestTime; }
+    public void setBestTime(int bestTime) { this.bestTime = bestTime; }
 }

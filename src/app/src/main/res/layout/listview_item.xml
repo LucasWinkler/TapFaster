@@ -10,33 +10,17 @@
         android:layout_width="0dp"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="5dp"
-        android:layout_weight="40"
+        android:layout_weight="70"
         android:textSize="18sp" />
          />
 
     <TextView
-        android:id="@+id/winsTextView"
+        android:id="@+id/timeTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_weight="20"
-        android:textSize="24sp" />
-    <TextView
-        android:id="@+id/lossesTextView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_weight="20"
-        android:textSize="24sp" />
-    <TextView
-        android:id="@+id/tiesTextView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_weight="20"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+        android:layout_weight="30"
         android:textSize="24sp" />
 
 </LinearLayout>
