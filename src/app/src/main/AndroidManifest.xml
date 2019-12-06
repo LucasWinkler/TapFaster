@@ -11,7 +11,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".ui.game.GameActivity"></activity>
+        <activity android:name=".ui.user.ScoreActivity" />
+        <activity android:name=".ui.scoreboard.ScoreboardActivity" />
+        <activity android:name=".ui.game.GameActivity" />
         <activity android:name=".ui.user.LoginActivity" />
         <activity android:name=".ui.home.HomeActivity">
             <intent-filter>

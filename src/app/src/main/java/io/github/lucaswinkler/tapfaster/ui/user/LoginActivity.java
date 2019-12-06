@@ -9,6 +9,7 @@ import io.github.lucaswinkler.tapfaster.R;
 import io.github.lucaswinkler.tapfaster.data.UserManager;
 import io.github.lucaswinkler.tapfaster.data.models.User;
 import io.github.lucaswinkler.tapfaster.ui.home.HomeActivity;
+import io.github.lucaswinkler.tapfaster.ui.scoreboard.ScoreboardActivity;
 
 import android.view.Menu;
 import android.view.MenuItem;
@@ -79,7 +80,7 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(new Intent(getApplicationContext(), HomeActivity.class));
                 return true;
             case R.id.activity_scoreboard:
-                //startActivity(new Intent(getApplicationContext(), ScoreboardActivity.class));
+                startActivity(new Intent(getApplicationContext(), ScoreboardActivity.class));
                 return true;
             case R.id.activity_login:
                 startActivity(new Intent(getApplicationContext(), LoginActivity.class));

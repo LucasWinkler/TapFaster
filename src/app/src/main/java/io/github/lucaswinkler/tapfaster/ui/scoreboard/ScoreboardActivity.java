@@ -1,40 +1,40 @@
-package io.github.lucaswinkler.tapfaster.ui.home;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import io.github.lucaswinkler.tapfaster.R;
-import io.github.lucaswinkler.tapfaster.data.UserManager;
-import io.github.lucaswinkler.tapfaster.ui.game.GameActivity;
-import io.github.lucaswinkler.tapfaster.ui.scoreboard.ScoreboardActivity;
-import io.github.lucaswinkler.tapfaster.ui.user.LoginActivity;
+package io.github.lucaswinkler.tapfaster.ui.scoreboard;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
 
-public class HomeActivity extends AppCompatActivity implements View.OnClickListener {
-    private Button btnPlay;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import io.github.lucaswinkler.tapfaster.R;
+import io.github.lucaswinkler.tapfaster.data.DatabaseHelper;
+import io.github.lucaswinkler.tapfaster.data.UserManager;
+import io.github.lucaswinkler.tapfaster.ui.home.HomeActivity;
+import io.github.lucaswinkler.tapfaster.ui.user.LoginActivity;
+
+public class ScoreboardActivity extends AppCompatActivity {
+    private ListView itemsListView;
+    private DatabaseHelper db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);
+        setContentView(R.layout.activity_scoreboard);
 
-        btnPlay = findViewById(R.id.activity_home_play_btn);
-        btnPlay.setOnClickListener(this);
+        //itemsListView = findViewById(R.id.itemsListView);
+        //db = new DatabaseHelper(this);
+        //updateDisplay();
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.activity_home_play_btn:
-                Intent loginActivityIntent = new Intent(this, GameActivity.class);
-                startActivity(loginActivityIntent);
-                break;
-        }
+    private void updateDisplay(){
+        // Update the scoreboard by getting all players and putting their data into a list view
+        // Filter by the text in the search bar and order by the time
     }
 
     @Override

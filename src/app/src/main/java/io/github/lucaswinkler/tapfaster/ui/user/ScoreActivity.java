@@ -1,40 +1,23 @@
-package io.github.lucaswinkler.tapfaster.ui.home;
+package io.github.lucaswinkler.tapfaster.ui.user;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import io.github.lucaswinkler.tapfaster.R;
 import io.github.lucaswinkler.tapfaster.data.UserManager;
-import io.github.lucaswinkler.tapfaster.ui.game.GameActivity;
+import io.github.lucaswinkler.tapfaster.ui.home.HomeActivity;
 import io.github.lucaswinkler.tapfaster.ui.scoreboard.ScoreboardActivity;
-import io.github.lucaswinkler.tapfaster.ui.user.LoginActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 
-public class HomeActivity extends AppCompatActivity implements View.OnClickListener {
-    private Button btnPlay;
+public class ScoreActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);
-
-        btnPlay = findViewById(R.id.activity_home_play_btn);
-        btnPlay.setOnClickListener(this);
-    }
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.activity_home_play_btn:
-                Intent loginActivityIntent = new Intent(this, GameActivity.class);
-                startActivity(loginActivityIntent);
-                break;
-        }
+        setContentView(R.layout.activity_score);
     }
 
     @Override
