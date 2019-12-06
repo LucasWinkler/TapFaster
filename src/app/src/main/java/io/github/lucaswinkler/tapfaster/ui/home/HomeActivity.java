@@ -1,10 +1,11 @@
-package io.github.lucaswinkler.tapfaster;
+package io.github.lucaswinkler.tapfaster.ui.home;
 
 import androidx.appcompat.app.AppCompatActivity;
+import io.github.lucaswinkler.tapfaster.R;
 
 import android.os.Bundle;
 
-public class MainActivity extends AppCompatActivity {
+public class HomeActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
