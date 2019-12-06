@@ -2,11 +2,18 @@
     <string name="app_name">TapFaster</string>
     <string name="title_activity_scoreboard">Scoreboard</string>
     <string name="action_settings">Settings</string>
-    <string name="title_activity_login">Sign in</string>
+    <string name="title_activity_login">TapFaster - Sign In</string>
     <string name="prompt_username">Username</string>
     <string name="prompt_password">Password</string>
-    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in">Sign in or Register</string>
     <string name="action_sign_in_short">Sign in</string>
-    <string name="welcome">"Welcome"</string>
-    <string name="login_failed">"Login failed"</string>
+    <string name="welcome">"Welcome "</string>
+    <string name="login_failed">Login failed</string>
+    <string name="menu_home">Home</string>
+    <string name="menu_scoreboard">Scoreboard</string>
+    <string name="menu_login">Sign in</string>
+    <string name="menu_logout">Sign out</string>
+    <string name="home_play">Play</string>
+    <string name="home_scoreboard">Scoreboard</string>
+    <string name="home_login">Sign in</string>
 </resources>
