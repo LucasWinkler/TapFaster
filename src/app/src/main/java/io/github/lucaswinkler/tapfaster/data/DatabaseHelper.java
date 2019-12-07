@@ -9,6 +9,7 @@ import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import io.github.lucaswinkler.tapfaster.data.models.User;
 
@@ -61,7 +62,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Log.d("Task list", "Upgrading db from version " + oldVersion + " to " + newVersion);
         onCreate(db);
     }
-
+    Random r = new Random();
     public void addUser(String username, String password) {
         openWriteableDb();
 
@@ -71,6 +72,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         db.insert(TABLE_USER, null, values);
         db.close();
+
+
+        int low = 150;
+        int high = 250;
+        int result = r.nextInt(high-low) + low;
+
+        updateUser(username, result);
     }
 
     public User getUser(String username) {
@@ -98,8 +106,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 COLUMN_USER_BEST_TIME
         };
 
-        String sortOrder = COLUMN_USER_BEST_TIME + " ASC";
-        List<User> userList = new ArrayList<User>();
+        String sortOrder = COLUMN_USER_BEST_TIME + " DESC";
+        List<User> userList = new ArrayList<>();
 
         openReadableDb();
 
@@ -125,6 +133,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(COLUMN_USER_BEST_TIME, user.getBestTime());
 
         db.update(TABLE_USER, values, COLUMN_USER_ID + " = ?", new String[]{String.valueOf(user.getId())});
+        closeDb();
+    }
+
+    public void updateUser(String username, int bestTime) {
+        openWriteableDb();
+
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_USER_BEST_TIME, bestTime);
+
+        db.update(TABLE_USER, values, COLUMN_USER_NAME + " = ?", new String[]{String.valueOf(username)});
         closeDb();
     }
 

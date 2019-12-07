@@ -33,8 +33,8 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 boolean success = UserManager.getInstance().login(
                         getApplicationContext(),
-                        usernameEditText.getText().toString(),
-                        passwordEditText.getText().toString());
+                        usernameEditText.getText().toString().trim(),
+                        passwordEditText.getText().toString().trim());
 
                 if (success) {
                     /* TODO: Redirect to the correct activity if one was passed with intent

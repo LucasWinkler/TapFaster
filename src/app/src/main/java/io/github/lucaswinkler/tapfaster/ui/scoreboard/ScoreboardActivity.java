@@ -4,6 +4,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
@@ -17,31 +20,40 @@ import io.github.lucaswinkler.tapfaster.R;
 import io.github.lucaswinkler.tapfaster.data.DatabaseHelper;
 import io.github.lucaswinkler.tapfaster.data.UserManager;
 import io.github.lucaswinkler.tapfaster.data.models.User;
+import io.github.lucaswinkler.tapfaster.ui.game.GameActivity;
 import io.github.lucaswinkler.tapfaster.ui.home.HomeActivity;
 import io.github.lucaswinkler.tapfaster.ui.user.LoginActivity;
 
-public class ScoreboardActivity extends AppCompatActivity {
-    private ListView itemsListView;
+public class ScoreboardActivity extends AppCompatActivity implements View.OnClickListener {
     private DatabaseHelper db;
+
+    private ListView itemsListView;
+    private EditText editTextName;
+    private Button btnSearch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scoreboard);
 
-        itemsListView = findViewById(R.id.itemsListView);
         db = new DatabaseHelper(this);
+
+        itemsListView = findViewById(R.id.itemsListView);
+        editTextName = findViewById(R.id.nameEditText);
+        btnSearch = findViewById(R.id.btnSearch);
+
+        btnSearch.setOnClickListener(this);
+
         updateDisplay("");
     }
 
     private void updateDisplay(String searchUsername) {
         // TODO: Filter by the text in the search bar and order by the time
         ArrayList<HashMap<String, String>> data = new ArrayList<>();
-        List<User> allUsers = db.getUsers();
-        List<User> users = new ArrayList<User>();
+        List<User> users = db.getUsers();
 
         for (User user : users) {
-            HashMap<String, String> map = new HashMap<String, String>();
+            HashMap<String, String> map = new HashMap<>();
 
             // If no best time then don't display on scoreboard
             if (user.getBestTime() <= 0) {
@@ -67,6 +79,15 @@ public class ScoreboardActivity extends AppCompatActivity {
 
         SimpleAdapter adapter = new SimpleAdapter(this, data, resource, from, to);
         itemsListView.setAdapter(adapter);
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.btnSearch:
+                updateDisplay(editTextName.getText().toString().trim());
+                break;
+        }
     }
 
     @Override
