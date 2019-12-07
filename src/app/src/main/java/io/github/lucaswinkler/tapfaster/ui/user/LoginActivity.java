@@ -6,6 +6,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import io.github.lucaswinkler.tapfaster.R;
+import io.github.lucaswinkler.tapfaster.data.DatabaseHelper;
 import io.github.lucaswinkler.tapfaster.data.UserManager;
 import io.github.lucaswinkler.tapfaster.data.models.User;
 import io.github.lucaswinkler.tapfaster.ui.home.HomeActivity;
@@ -19,10 +20,14 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 public class LoginActivity extends AppCompatActivity {
+    private DatabaseHelper db;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        db = new DatabaseHelper(this);
 
         final EditText usernameEditText = findViewById(R.id.username);
         final EditText passwordEditText = findViewById(R.id.password);
@@ -31,20 +36,32 @@ public class LoginActivity extends AppCompatActivity {
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                boolean success = UserManager.getInstance().login(
+                UserManager userManager = UserManager.getInstance();
+                boolean success = userManager.login(
                         getApplicationContext(),
                         usernameEditText.getText().toString().trim(),
                         passwordEditText.getText().toString().trim());
 
                 if (success) {
-                    /* TODO: Redirect to the correct activity if one was passed with intent
-
-                       Example: Logging in after you already played the game to save your score.
-                                Then redirect to the scoreboard to show the scores.
-                                For now we will just redirect to the home page.
-                     */
-                    startActivity(new Intent(getApplicationContext(), HomeActivity.class));
                     showLoginSuccess();
+                    Bundle extras = getIntent().getExtras();
+                    if (extras != null) {
+                        int averageTime = extras.getInt("averageTime", 0);
+                        if (averageTime > 0) {
+                            if (userManager.isLoggedIn()) {
+                                User user = userManager.getLoggedInUser();
+                                if (user.getBestTime() <= 0 || averageTime < user.getBestTime()) {
+                                    db.updateUser(user.getUsername(), averageTime);
+                                    Toast.makeText(getApplicationContext(), "Updated score to " + averageTime + " ms", Toast.LENGTH_LONG).show();
+                                    startActivity(new Intent(getApplicationContext(), ScoreboardActivity.class));
+                                } else {
+                                    Toast.makeText(getApplicationContext(), "You already have a better score", Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        }
+                    }
+
+                    startActivity(new Intent(getApplicationContext(), HomeActivity.class));
                 } else {
                     showLoginFailed();
                 }
@@ -54,8 +71,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void showLoginSuccess() {
         User user = UserManager.getInstance().getLoggedInUser();
-        String welcome = getString(R.string.welcome) + user.getUsername() + "!";
-        Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_LONG).show();
+        Toast.makeText(getApplicationContext(), getString(R.string.welcome, user.getUsername()), Toast.LENGTH_SHORT).show();
     }
 
     private void showLoginFailed() {

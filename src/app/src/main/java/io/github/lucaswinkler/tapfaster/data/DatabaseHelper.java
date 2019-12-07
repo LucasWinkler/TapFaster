@@ -53,7 +53,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE " + TABLE_USER + "("
                 + COLUMN_USER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + COLUMN_USER_NAME + " TEXT UNIQUE,"
-                + COLUMN_USER_BEST_TIME + " INTEGER DEFAULT -1," + COLUMN_USER_PASSWORD + " TEXT" + ")");
+                + COLUMN_USER_BEST_TIME + " INTEGER DEFAULT 0," + COLUMN_USER_PASSWORD + " TEXT" + ")");
     }
 
     @Override
@@ -99,7 +99,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 COLUMN_USER_BEST_TIME
         };
 
-        String sortOrder = COLUMN_USER_BEST_TIME + " DESC";
+        String sortOrder = COLUMN_USER_BEST_TIME + " ASC";
         List<User> userList = new ArrayList<>();
 
         openReadableDb();

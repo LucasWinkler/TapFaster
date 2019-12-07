@@ -10,6 +10,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -48,28 +49,28 @@ public class ScoreboardActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void updateDisplay(String searchUsername) {
-        // TODO: Filter by the text in the search bar and order by the time
         ArrayList<HashMap<String, String>> data = new ArrayList<>();
         List<User> users = db.getUsers();
+        List<User> filteredUsers = new ArrayList<>();
 
         for (User user : users) {
-            HashMap<String, String> map = new HashMap<>();
-
-            // If no best time then don't display on scoreboard
             if (user.getBestTime() <= 0) {
                 continue;
             }
 
-            if (!searchUsername.isEmpty()){
-                if (user.getUsername().contains(searchUsername)) {
-                    map.put("name", user.getUsername());
-                    map.put("best_time", user.getBestTimeToString());
-                }
+            if (searchUsername.isEmpty()){
+                filteredUsers.add(user);
             } else {
-                map.put("name", user.getUsername());
-                map.put("best_time", user.getBestTimeToString());
+                if (user.getUsername().toLowerCase().contains(searchUsername.toLowerCase())){
+                    filteredUsers.add(user);
+                }
             }
+        }
 
+        for (User user : filteredUsers) {
+            HashMap<String, String> map = new HashMap<>();
+            map.put("name", user.getUsername());
+            map.put("best_time", user.getBestTimeToString());
             data.add(map);
         }
 

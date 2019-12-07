@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import io.github.lucaswinkler.tapfaster.R;
 import io.github.lucaswinkler.tapfaster.data.DatabaseHelper;
 import io.github.lucaswinkler.tapfaster.data.UserManager;
+import io.github.lucaswinkler.tapfaster.data.models.User;
 import io.github.lucaswinkler.tapfaster.ui.home.HomeActivity;
 import io.github.lucaswinkler.tapfaster.ui.scoreboard.ScoreboardActivity;
 import io.github.lucaswinkler.tapfaster.ui.user.LoginActivity;
@@ -15,23 +16,31 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Arrays;
 import java.util.Random;
 import java.util.Timer;
+import java.util.TimerTask;
 
 enum GameState {
     START,
     WAIT,
     WARN,
     GO,
+    RESULT,
     FINISH
 }
 
 public class GameActivity extends AppCompatActivity implements View.OnClickListener {
     private DatabaseHelper db;
 
-    private Button btnTest;
+    private Button btnTap;
+    private Button btnSave;
+    private TextView averageTextView;
+    private TextView triesTextView;
 
     private static final int MAX_TRIES = 5;
 
@@ -42,8 +51,8 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     private long startTime;
     private long endTime;
 
-    private int times[];
-    private int triesLeft;
+    private int[] times;
+    private int tries;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,88 +60,142 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_game);
 
         db = new DatabaseHelper(this);
-        timer = new Timer();
         random = new Random();
 
-        btnTest = findViewById(R.id.btnTest);
-        btnTest.setOnClickListener(this);
+        averageTextView = findViewById(R.id.averageTextView);
+        triesTextView = findViewById(R.id.triesTextView);
+        btnTap = findViewById(R.id.btnTap);
+        btnSave = findViewById(R.id.btnSave);
+
+        btnTap.setOnClickListener(this);
+        btnSave.setOnClickListener(this);
 
         setGameState(GameState.START);
     }
 
     private void initGame() {
-        triesLeft = MAX_TRIES;
-        times = new int[5];
-        startTime = -1;
-        endTime = -1;
+        tries = 0;
+        times = new int[MAX_TRIES];
+        startTime = 0;
+        endTime = 0;
+        btnTap.setText(getResources().getString(R.string.game_start));
+        btnSave.setVisibility(View.INVISIBLE);
+        averageTextView.setText(getResources().getString(R.string.game_average, "0"));
+        triesTextView.setText(getResources().getString(R.string.game_tries, Integer.toString(tries), Integer.toString(MAX_TRIES)));
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.btnTest:
+            case R.id.btnTap:
                 playTurn();
+                break;
+            case R.id.btnSave:
+                UserManager userManager = UserManager.getInstance();
+                if (userManager.isLoggedIn()) {
+                    User user = userManager.getLoggedInUser();
+                    if (user.getBestTime() <= 0 || user.getBestTime() > getAverageTime()){
+                        db.updateUser(user.getUsername(), getAverageTime());
+                        Toast.makeText(getApplicationContext(), "Updated score to " + getAverageTime() + " ms", Toast.LENGTH_LONG).show();
+                        startActivity(new Intent(getApplicationContext(), ScoreboardActivity.class));
+                    }
+                } else {
+                    Intent loginActivityIntent = new Intent(getApplicationContext(), LoginActivity.class);
+                    loginActivityIntent.putExtra("averageTime", getAverageTime());
+                    startActivity(loginActivityIntent);
+                }
                 break;
         }
     }
 
-    private long getTimeElapsedInMilliseconds() {
-        return (endTime - startTime) / 1000000;
+    private int getTimeElapsed() {
+        return (int) (endTime - startTime);
     }
 
     private int getAverageTime() {
         int sum = 0;
         for (int time : times) sum += time;
-        return Math.round(sum / MAX_TRIES);
+        return Math.round(sum / tries);
     }
 
-    private void setGameState(GameState gameState) {
+    private void setBackgroundColour(int colour) {
+        btnTap.setBackgroundColor(colour);
+    }
+
+    public void setGameState(GameState gameState) {
         this.gameState = gameState;
 
         switch (gameState) {
             case START:
-                btnTest.setBackgroundColor(getResources().getColor(R.color.colorGameBlue));
+                setBackgroundColour(getResources().getColor(R.color.colorGameBlue));
                 initGame();
                 break;
             case WAIT:
-                btnTest.setBackgroundColor(getResources().getColor(R.color.colorGameRed));
+                setBackgroundColour(getResources().getColor(R.color.colorGameRed));
+                btnTap.setText("Wait for green");
+                timer = new Timer();
+                timer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                setGameState(GameState.GO);
+                            }
+                        });
+                    }
+                }, random.nextInt(5000 - 1500) + 1500);
                 break;
             case WARN:
-                btnTest.setBackgroundColor(getResources().getColor(R.color.colorGameBlue));
+                setBackgroundColour(getResources().getColor(R.color.colorGameBlue));
+                btnTap.setText("Too soon! \n \n Tap to try again");
+                timer.cancel();
+                timer.purge();
                 break;
             case GO:
-                btnTest.setBackgroundColor(getResources().getColor(R.color.colorGameGreen));
-                startTime = System.nanoTime();
+                setBackgroundColour(getResources().getColor(R.color.colorGameGreen));
+                startTime = System.currentTimeMillis();
+                btnTap.setText("Tap!");
+                break;
+            case RESULT:
+                setBackgroundColour(getResources().getColor(R.color.colorGameBlue));
+                btnTap.setText(getResources().getString(R.string.game_result, Integer.toString(getTimeElapsed())));
                 break;
             case FINISH:
-                btnTest.setBackgroundColor(getResources().getColor(R.color.colorGameBlue));
+                setBackgroundColour(getResources().getColor(R.color.colorGameBlue));
+                btnTap.setText(getResources().getString(R.string.game_finish, Integer.toString(getTimeElapsed())));
+                btnSave.setVisibility(View.VISIBLE);
                 break;
         }
     }
 
     private void playTurn() {
-        if (triesLeft <= 0) {
-            setGameState(GameState.FINISH);
-        }
-
         switch (gameState) {
             case START:
-                initGame();
+            case WARN:
+            case RESULT:
+                setGameState(GameState.WAIT);
                 break;
             case WAIT:
-                break;
-            case WARN:
-                setGameState(GameState.GO);
+                setGameState(GameState.WARN);
                 break;
             case GO:
-                endTime = System.nanoTime();
-                triesLeft--;
-                int elapsedTime = (int) getTimeElapsedInMilliseconds();
-                // TODO: Display time and tries left
+                endTime = System.currentTimeMillis();
+                times[tries] = getTimeElapsed();
+                tries += 1;
+
+                averageTextView.setText(getResources().getString(R.string.game_average, Integer.toString(getAverageTime())));
+                triesTextView.setText(getResources().getString(R.string.game_tries, Integer.toString(tries), Integer.toString(MAX_TRIES)));
+
+                if (tries >= MAX_TRIES) {
+                    setGameState(GameState.FINISH);
+                    break;
+                }
+
+                setGameState(GameState.RESULT);
                 break;
             case FINISH:
-                int averageTime = getAverageTime();
-                // TODO: Display average and save score button
+                setGameState(GameState.START);
                 break;
         }
     }

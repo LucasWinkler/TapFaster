@@ -7,13 +7,19 @@
     <string name="prompt_password">Password</string>
     <string name="action_sign_in">Sign in or Register</string>
     <string name="action_sign_in_short">Sign in</string>
-    <string name="welcome">"Welcome "</string>
+    <string name="welcome">"Welcome %1$s!"</string>
     <string name="login_failed">Login failed</string>
     <string name="menu_home">Home</string>
     <string name="menu_scoreboard">Scoreboard</string>
+    <string name="menu_score">Best score</string>
     <string name="menu_login">Sign in</string>
     <string name="menu_logout">Sign out</string>
     <string name="home_play">Play</string>
     <string name="home_scoreboard">Scoreboard</string>
     <string name="home_login">Sign in</string>
+    <string name="game_average">Average | %1$s ms</string>
+    <string name="game_tries">Tries | %1$s of %2$s</string>
+    <string name="game_result">Time: %1$s ms\n \n Tap to continue</string>
+    <string name="game_finish">Time: %1$s ms \n \n Tap to play again or tap the \n "Save score" button at the bottom.</string>
+    <string name="game_start">Tap as soon as the background turns green \n \n Tap to start</string>
 </resources>
