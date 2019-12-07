@@ -5,4 +5,7 @@
     <color name="colorAccent">#1E75DB</color>
     <color name="colorTitlePrimary">#1A2B5C</color>
     <color name="colorLeadPrimary">#3D3D3D</color>
+    <color name="colorGameBlue">#2b87d1</color>
+    <color name="colorGameRed">#ce2636</color>
+    <color name="colorGameGreen">#4bdb6a</color>
 </resources>

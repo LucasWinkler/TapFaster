@@ -62,7 +62,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Log.d("Task list", "Upgrading db from version " + oldVersion + " to " + newVersion);
         onCreate(db);
     }
-    Random r = new Random();
+
     public void addUser(String username, String password) {
         openWriteableDb();
 
@@ -72,13 +72,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         db.insert(TABLE_USER, null, values);
         db.close();
-
-
-        int low = 150;
-        int high = 250;
-        int result = r.nextInt(high-low) + low;
-
-        updateUser(username, result);
     }
 
     public User getUser(String username) {
