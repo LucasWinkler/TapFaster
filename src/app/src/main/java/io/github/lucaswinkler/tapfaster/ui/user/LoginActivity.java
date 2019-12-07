@@ -49,7 +49,6 @@ public class LoginActivity extends AppCompatActivity {
                         passwordEditText.getText().toString().trim());
 
                 if (success) {
-                    showLoginSuccess();
                     Bundle extras = getIntent().getExtras();
                     if (extras != null) {
                         int averageTime = extras.getInt("averageTime", 0);
@@ -62,13 +61,16 @@ public class LoginActivity extends AppCompatActivity {
                                     startActivity(new Intent(getApplicationContext(), ScoreboardActivity.class));
                                 } else {
                                     Toast.makeText(getApplicationContext(), "You already have a better score", Toast.LENGTH_LONG).show();
+                                    startActivity(new Intent(getApplicationContext(), ScoreboardActivity.class));
                                 }
                             }
                         }
+                    } else {
+                        showLoginSuccess();
+                        startActivity(new Intent(getApplicationContext(), HomeActivity.class));
                     }
 
                     addFirstPlaceNotification();
-                    startActivity(new Intent(getApplicationContext(), HomeActivity.class));
                 } else {
                     showLoginFailed();
                 }
