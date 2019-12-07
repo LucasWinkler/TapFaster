@@ -27,7 +27,7 @@ public class User {
 
     public int getBestTime() { return bestTime; }
 
-    public String getBestTimeToString() { return bestTime + "ms"; }
+    public String getBestTimeToString() { return bestTime + " ms"; }
 
     public void setBestTime(int bestTime) { this.bestTime = bestTime; }
 }

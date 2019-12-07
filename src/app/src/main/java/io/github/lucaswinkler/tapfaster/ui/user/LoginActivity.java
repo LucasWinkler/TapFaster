@@ -1,10 +1,14 @@
 package io.github.lucaswinkler.tapfaster.ui.user;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
 import io.github.lucaswinkler.tapfaster.R;
 import io.github.lucaswinkler.tapfaster.data.DatabaseHelper;
 import io.github.lucaswinkler.tapfaster.data.UserManager;
@@ -18,6 +22,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import java.util.List;
 
 public class LoginActivity extends AppCompatActivity {
     private DatabaseHelper db;
@@ -61,12 +67,52 @@ public class LoginActivity extends AppCompatActivity {
                         }
                     }
 
+                    addFirstPlaceNotification();
                     startActivity(new Intent(getApplicationContext(), HomeActivity.class));
                 } else {
                     showLoginFailed();
                 }
             }
         });
+    }
+
+    private void addFirstPlaceNotification(){
+        List<User> users = db.getUsers();
+        User firstPlaceUser = null;
+
+        for(User user : users){
+            if (firstPlaceUser == null && user.getBestTime() > 0){
+                firstPlaceUser = user;
+            } else if (user.getBestTime() > 0 && firstPlaceUser.getBestTime() > 0 && user.getBestTime() < firstPlaceUser.getBestTime()){
+                firstPlaceUser = user;
+            }
+        }
+
+        String title = "";
+        String text = "";
+        if (firstPlaceUser == null){
+            title = "Play Now!";
+            text = "No one is in the lead!";
+        } else if (UserManager.getInstance().isLoggedIn()) {
+            if (!UserManager.getInstance().getLoggedInUser().getUsername().equals(firstPlaceUser.getUsername())){
+                title = "Worlds Best Player";
+                text = "Beat "+ firstPlaceUser.getUsername() + "'s first place score of " + firstPlaceUser.getBestTimeToString();
+            } else {
+                title = "Worlds Best Player";
+                text = "You are currently in first place!";
+            }
+        }
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
+                .setSmallIcon(R.drawable.logo)
+                .setContentTitle(title)
+                .setContentText(text);
+        Intent notificationIntent = new Intent(this, HomeActivity.class);
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        builder.setContentIntent(contentIntent);
+
+        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        manager.notify(0, builder.build());
     }
 
     private void showLoginSuccess() {
